@@ -430,8 +430,9 @@ bot.on('text', async (ctx) => {
                                 var named = "";
                                 try {
                                     const trackEms = await Ems(newString[0]);
+                                    let detailsText = "";
                                     if (trackEms == "Timeline not found") {
-                                        let detailsText = "";
+
                                         console.log(newString[0]);
                                         const trackingResult = await track(newString[0]);
 
