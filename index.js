@@ -459,6 +459,7 @@ bot.on('text', async (ctx) => {
 
                                     } else {
                                         detailsText = trackEms;
+                                        named = 'EmsDz'
                                     }
 
                                     const send = `
