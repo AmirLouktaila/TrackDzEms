@@ -13,6 +13,29 @@ const bot = new Telegraf(botToken);
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SB_URL, process.env.SB_KEY, { auth: { persistSession: false } });
 
+//translate///
+
+
+async function translateText(from, to, text) {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(text)}`;
+
+    try {
+        const response = await axios.get(url);
+
+        if (response.status === 200) {
+            const jsonResponse = response.data;
+            const translatedText = jsonResponse[0][0][0];
+            console.log(translatedText);
+            return translatedText;
+        } else {
+            throw new Error('Failed to load data');
+        }
+    } catch (error) {
+        throw new Error('Failed to connect to the translation service.');
+    }
+}
+
+//end///
 
 
 // /** db **/
@@ -481,7 +504,22 @@ By ${named}
                                         ],
                                     };
                                     if (user[0].translateok == "ar") {
-                                        translate(send, null, 'ar').then(res => {
+                                        // translate(send, null, 'ar').then(res => {
+                                        //     bar = 'https://barcodeapi.org/api/' + newString;
+                                        //     ctx.replyWithPhoto({ url: bar }).then(() => {
+                                        //         ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                        //             ctx.deleteMessage(messages.message_id)
+                                        //         })
+                                        //     })
+
+
+                                        //     // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
+                                        // }).catch(err => {
+                                        //     console.error(err);
+                                        // });
+
+
+                                        translateText('en', 'ar', send).then(res => {
                                             bar = 'https://barcodeapi.org/api/' + newString;
                                             ctx.replyWithPhoto({ url: bar }).then(() => {
                                                 ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
@@ -494,6 +532,7 @@ By ${named}
                                         }).catch(err => {
                                             console.error(err);
                                         });
+
 
                                     } else if (user[0].translateok == "en") {
                                         bar = 'https://barcodeapi.org/api/' + newString;
@@ -503,7 +542,20 @@ By ${named}
                                             })
                                         })
                                     } else if (user[0].translateok == "fr") {
-                                        translate(send, null, 'fr').then(res => {
+                                        // translate(send, null, 'fr').then(res => {
+                                        //     bar = 'https://barcodeapi.org/api/' + newString;
+                                        //     ctx.replyWithPhoto({ url: bar }).then(() => {
+                                        //         ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                        //             ctx.deleteMessage(messages.message_id)
+                                        //         })
+                                        //     })
+
+
+                                        //     // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
+                                        // }).catch(err => {
+                                        //     console.error(err);
+                                        // });
+                                        translateText('en', 'fr', send).then(res => {
                                             bar = 'https://barcodeapi.org/api/' + newString;
                                             ctx.replyWithPhoto({ url: bar }).then(() => {
                                                 ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
@@ -517,8 +569,26 @@ By ${named}
                                             console.error(err);
                                         });
 
+
+
+
+
                                     } else {
-                                        translate(send, null, 'ar').then(res => {
+                                        // translate(send, null, 'ar').then(res => {
+                                        //     bar = 'https://barcodeapi.org/api/' + newString;
+                                        //     ctx.replyWithPhoto({ url: bar }).then(() => {
+                                        //         ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                        //             ctx.deleteMessage(messages.message_id)
+                                        //         })
+                                        //     })
+
+
+                                        //     // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
+                                        // }).catch(err => {
+                                        //     console.error(err);
+                                        // });
+
+                                        translateText('en', 'ar', send).then(res => {
                                             bar = 'https://barcodeapi.org/api/' + newString;
                                             ctx.replyWithPhoto({ url: bar }).then(() => {
                                                 ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
