@@ -504,22 +504,8 @@ By ${named}
                                         ],
                                     };
                                     if (user[0].translateok == "ar") {
-                                        // translate(send, null, 'ar').then(res => {
-                                        //     bar = 'https://barcodeapi.org/api/' + newString;
-                                        //     ctx.replyWithPhoto({ url: bar }).then(() => {
-                                        //         ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
-                                        //             ctx.deleteMessage(messages.message_id)
-                                        //         })
-                                        //     })
 
-
-                                        //     // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
-                                        // }).catch(err => {
-                                        //     console.error(err);
-                                        // });
-
-
-                                        translateText('en', 'ar', send).then(res => {
+                                        translateText('auto', 'ar', send).then(res => {
                                             bar = 'https://barcodeapi.org/api/' + newString;
                                             ctx.replyWithPhoto({ url: bar }).then(() => {
                                                 ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
@@ -542,20 +528,8 @@ By ${named}
                                             })
                                         })
                                     } else if (user[0].translateok == "fr") {
-                                        // translate(send, null, 'fr').then(res => {
-                                        //     bar = 'https://barcodeapi.org/api/' + newString;
-                                        //     ctx.replyWithPhoto({ url: bar }).then(() => {
-                                        //         ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
-                                        //             ctx.deleteMessage(messages.message_id)
-                                        //         })
-                                        //     })
 
-
-                                        //     // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
-                                        // }).catch(err => {
-                                        //     console.error(err);
-                                        // });
-                                        translateText('en', 'fr', send).then(res => {
+                                        translateText('auto', 'fr', send).then(res => {
                                             bar = 'https://barcodeapi.org/api/' + newString;
                                             ctx.replyWithPhoto({ url: bar }).then(() => {
                                                 ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
@@ -574,21 +548,9 @@ By ${named}
 
 
                                     } else {
-                                        // translate(send, null, 'ar').then(res => {
-                                        //     bar = 'https://barcodeapi.org/api/' + newString;
-                                        //     ctx.replyWithPhoto({ url: bar }).then(() => {
-                                        //         ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
-                                        //             ctx.deleteMessage(messages.message_id)
-                                        //         })
-                                        //     })
 
 
-                                        //     // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
-                                        // }).catch(err => {
-                                        //     console.error(err);
-                                        // });
-
-                                        translateText('en', 'ar', send).then(res => {
+                                        translateText('auto', 'ar', send).then(res => {
                                             bar = 'https://barcodeapi.org/api/' + newString;
                                             ctx.replyWithPhoto({ url: bar }).then(() => {
                                                 ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
