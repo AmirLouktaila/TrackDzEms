@@ -475,7 +475,7 @@ By ${named}
                                         inline_keyboard: [
 
                                             [{ text: 'انضم الى قناتنا', url: Channel }],
-                                            [{ text: 'جرب بوت تخفيض النقاط', url: 'https://t.me/TopCouponsBot' },],
+                                            [{ text: 'جرب بوت تخفيض النقاط', url: 'https://t.me/Procoinsbot_bot' },],
 
 
                                         ],
