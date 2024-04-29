@@ -2,7 +2,7 @@ const { Telegraf, Markup } = require('telegraf');
 const axios = require('axios');
 const https = require('https');
 const express = require('express');
-const { translate } = require('bing-translate-api');
+const { translate } = require('free-translate');
 const cheerio = require('cheerio');
 const app = express();
 const botToken = process.env.token;
@@ -12,32 +12,6 @@ const bot = new Telegraf(botToken);
 
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SB_URL, process.env.SB_KEY, { auth: { persistSession: false } });
-
-//translate///
-
-
-async function translateText(from, to, text) {
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${from}&tl=${to}&dt=t&q=${encodeURIComponent(text)}`;
-
-    try {
-        const response = await axios.get(url);
-
-        if (response.status === 200) {
-            const jsonResponse = response.data;
-            const translatedText = jsonResponse[0][0][0];
-            console.log(translatedText);
-            return translatedText;
-        } else {
-            throw new Error('Failed to load data');
-        }
-    } catch (error) {
-        throw new Error('Failed to connect to the translation service.');
-    }
-}
-
-//end///
-
-
 // /** db **/
 
 function deleteWordBeforeSpace(str) {
@@ -438,7 +412,7 @@ bot.on('text', async (ctx) => {
     const userIdToCheck = ctx.message.from.id;
     const user = await userDb(ctx.message.from.id);
     if (user[0].mode == "track") {
-      //  if (await isUserSubscribed(userIdToCheck)) {
+        if (await isUserSubscribed(userIdToCheck)) {
             console.log('t')
             try {
                 if (text === "/start") {
@@ -505,19 +479,16 @@ By ${named}
                                     };
                                     if (user[0].translateok == "ar") {
 
-                                        translateText('auto', 'ar', send).then(res => {
+                                        (async () => {
+                                            const translatedText = await translate(send, { to: 'ar' });
+
                                             bar = 'https://barcodeapi.org/api/' + newString;
                                             ctx.replyWithPhoto({ url: bar }).then(() => {
-                                                ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                                ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(() => {
                                                     ctx.deleteMessage(messages.message_id)
                                                 })
                                             })
-
-
-                                            // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
-                                        }).catch(err => {
-                                            console.error(err);
-                                        });
+                                        })();
 
 
                                     } else if (user[0].translateok == "en") {
@@ -528,41 +499,30 @@ By ${named}
                                             })
                                         })
                                     } else if (user[0].translateok == "fr") {
+                                        (async () => {
+                                            const translatedText = await translate(send, { to: 'fr' });
 
-                                        translateText('auto', 'fr', send).then(res => {
                                             bar = 'https://barcodeapi.org/api/' + newString;
                                             ctx.replyWithPhoto({ url: bar }).then(() => {
-                                                ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                                ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(() => {
                                                     ctx.deleteMessage(messages.message_id)
                                                 })
                                             })
-
-
-                                            // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
-                                        }).catch(err => {
-                                            console.error(err);
-                                        });
-
-
-
-
+                                        })();
 
                                     } else {
 
 
-                                        translateText('auto', 'ar', send).then(res => {
+                                        (async () => {
+                                            const translatedText = await translate(send, { to: 'ar' });
+
                                             bar = 'https://barcodeapi.org/api/' + newString;
                                             ctx.replyWithPhoto({ url: bar }).then(() => {
-                                                ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                                ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(() => {
                                                     ctx.deleteMessage(messages.message_id)
                                                 })
                                             })
-
-
-                                            // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
-                                        }).catch(err => {
-                                            console.error(err);
-                                        });
+                                        })();
 
                                     }
 
@@ -581,14 +541,14 @@ By ${named}
             } catch (e) {
                 ctx.reply('حدث خطأ غير متوقع');
             }
-        // } else {
-        //     const replyMarkup2 = {
-        //         inline_keyboard: [
-        //             [{ text: 'اشتراك', url: Channel }],
-        //         ],
-        //     };
-        //     ctx.reply(' اأنت غير مشترك في القناة.', { reply_markup: replyMarkup2 });
-        // }
+        } else {
+            const replyMarkup2 = {
+                inline_keyboard: [
+                    [{ text: 'اشتراك', url: Channel }],
+                ],
+            };
+            ctx.reply(' اأنت غير مشترك في القناة.', { reply_markup: replyMarkup2 });
+        }
     } else if (user[0].mode == "add") {
         user[0].track.push(" " + ctx.message.text)
         await updateUser(ctx.message.from.id, { track: user[0].track })
