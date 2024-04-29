@@ -483,9 +483,9 @@ By ${named}
                                             const translatedText = await translate(send, { to: 'ar' });
 
                                             bar = 'https://barcodeapi.org/api/' + newString;
-                                            await ctx.replyWithPhoto({ url: bar }).then(async () => {
-                                                await ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(async () => {
-                                                    await ctx.deleteMessage(messages.message_id)
+                                             ctx.replyWithPhoto({ url: bar }).then(async () => {
+                                                 ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(async () => {
+                                                     ctx.deleteMessage(messages.message_id)
                                                 })
                                             })
                                         })();
@@ -503,9 +503,9 @@ By ${named}
                                             const translatedText = await translate(send, { to: 'fr' });
 
                                             bar = 'https://barcodeapi.org/api/' + newString;
-                                            await ctx.replyWithPhoto({ url: bar }).then(async () => {
-                                                await ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(async () => {
-                                                    await ctx.deleteMessage(messages.message_id)
+                                             ctx.replyWithPhoto({ url: bar }).then(async () => {
+                                                 ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(async () => {
+                                                     ctx.deleteMessage(messages.message_id)
                                                 })
                                             })
                                         })();
@@ -517,9 +517,9 @@ By ${named}
                                             const translatedText = await translate(send, { to: 'ar' });
 
                                             bar = 'https://barcodeapi.org/api/' + newString;
-                                            await ctx.replyWithPhoto({ url: bar }).then(async () => {
-                                                await ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(async () => {
-                                                    await ctx.deleteMessage(messages.message_id)
+                                             ctx.replyWithPhoto({ url: bar }).then(async () => {
+                                                 ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(async () => {
+                                                     ctx.deleteMessage(messages.message_id)
                                                 })
                                             })
                                         })();
