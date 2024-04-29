@@ -483,7 +483,7 @@ By ${named}
                                             const translatedText = await translate(send, { to: 'ar' });
 
                                             bar = 'https://barcodeapi.org/api/' + newString;
-                                            ctx.replyWithPhoto({ url: bar }).then(() => {
+                                           await ctx.replyWithPhoto({ url: bar }).then(() => {
                                                 ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(() => {
                                                     ctx.deleteMessage(messages.message_id)
                                                 })
@@ -493,7 +493,7 @@ By ${named}
 
                                     } else if (user[0].translateok == "en") {
                                         bar = 'https://barcodeapi.org/api/' + newString;
-                                        ctx.replyWithPhoto({ url: bar }).then(() => {
+                                          ctx.replyWithPhoto({ url: bar }).then(() => {
                                             ctx.sendMessage(send, { reply_markup: replyMarkup }).then(() => {
                                                 ctx.deleteMessage(messages.message_id)
                                             })
@@ -503,7 +503,7 @@ By ${named}
                                             const translatedText = await translate(send, { to: 'fr' });
 
                                             bar = 'https://barcodeapi.org/api/' + newString;
-                                            ctx.replyWithPhoto({ url: bar }).then(() => {
+                                            await    ctx.replyWithPhoto({ url: bar }).then(() => {
                                                 ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(() => {
                                                     ctx.deleteMessage(messages.message_id)
                                                 })
@@ -517,7 +517,7 @@ By ${named}
                                             const translatedText = await translate(send, { to: 'ar' });
 
                                             bar = 'https://barcodeapi.org/api/' + newString;
-                                            ctx.replyWithPhoto({ url: bar }).then(() => {
+                                            await   ctx.replyWithPhoto({ url: bar }).then(() => {
                                                 ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(() => {
                                                     ctx.deleteMessage(messages.message_id)
                                                 })
