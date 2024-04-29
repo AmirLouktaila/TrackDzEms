@@ -438,7 +438,7 @@ bot.on('text', async (ctx) => {
     const userIdToCheck = ctx.message.from.id;
     const user = await userDb(ctx.message.from.id);
     if (user[0].mode == "track") {
-        if (await isUserSubscribed(userIdToCheck)) {
+      //  if (await isUserSubscribed(userIdToCheck)) {
             console.log('t')
             try {
                 if (text === "/start") {
@@ -581,14 +581,14 @@ By ${named}
             } catch (e) {
                 ctx.reply('حدث خطأ غير متوقع');
             }
-        } else {
-            const replyMarkup2 = {
-                inline_keyboard: [
-                    [{ text: 'اشتراك', url: Channel }],
-                ],
-            };
-            ctx.reply(' اأنت غير مشترك في القناة.', { reply_markup: replyMarkup2 });
-        }
+        // } else {
+        //     const replyMarkup2 = {
+        //         inline_keyboard: [
+        //             [{ text: 'اشتراك', url: Channel }],
+        //         ],
+        //     };
+        //     ctx.reply(' اأنت غير مشترك في القناة.', { reply_markup: replyMarkup2 });
+        // }
     } else if (user[0].mode == "add") {
         user[0].track.push(" " + ctx.message.text)
         await updateUser(ctx.message.from.id, { track: user[0].track })
