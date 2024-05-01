@@ -1,8 +1,8 @@
 const { Telegraf, Markup } = require('telegraf');
 const axios = require('axios');
 const https = require('https');
+const { translate } = require('bing-translate-api');
 const express = require('express');
-const { translate } = require('free-translate');
 const cheerio = require('cheerio');
 const app = express();
 const botToken = process.env.token;
@@ -468,6 +468,7 @@ ${detailsText}
 By ${named}
 `;
 
+
                                     const replyMarkup = await {
                                         inline_keyboard: [
 
@@ -478,18 +479,19 @@ By ${named}
                                         ],
                                     };
                                     if (user[0].translateok == "ar") {
-
-                                        (async () => {
-                                            const translatedText = await translate(send, { to: 'ar' });
-
+                                        translate(send, null, 'ar').then(res => {
                                             bar = 'https://barcodeapi.org/api/' + newString;
-                                             ctx.replyWithPhoto({ url: bar }).then(async () => {
-                                                 ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(async () => {
-                                                     ctx.deleteMessage(messages.message_id)
+                                            ctx.replyWithPhoto({ url: bar }).then(() => {
+                                                ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                                    ctx.deleteMessage(messages.message_id)
                                                 })
                                             })
-                                        })();
 
+
+                                            // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
+                                        }).catch(err => {
+                                            console.error(err);
+                                        });
 
                                     } else if (user[0].translateok == "en") {
                                         bar = 'https://barcodeapi.org/api/' + newString;
@@ -499,30 +501,34 @@ By ${named}
                                             })
                                         })
                                     } else if (user[0].translateok == "fr") {
-                                        (async () => {
-                                            const translatedText = await translate(send, { to: 'fr' });
-
+                                        translate(send, null, 'fr').then(res => {
                                             bar = 'https://barcodeapi.org/api/' + newString;
-                                             ctx.replyWithPhoto({ url: bar }).then(async () => {
-                                                 ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(async () => {
-                                                     ctx.deleteMessage(messages.message_id)
+                                            ctx.replyWithPhoto({ url: bar }).then(() => {
+                                                ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                                    ctx.deleteMessage(messages.message_id)
                                                 })
                                             })
-                                        })();
+
+
+                                            // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
+                                        }).catch(err => {
+                                            console.error(err);
+                                        });
 
                                     } else {
-
-
-                                        (async () => {
-                                            const translatedText = await translate(send, { to: 'ar' });
-
+                                        translate(send, null, 'ar').then(res => {
                                             bar = 'https://barcodeapi.org/api/' + newString;
-                                             ctx.replyWithPhoto({ url: bar }).then(async () => {
-                                                 ctx.sendMessage(translatedText, { reply_markup: replyMarkup }).then(async () => {
-                                                     ctx.deleteMessage(messages.message_id)
+                                            ctx.replyWithPhoto({ url: bar }).then(() => {
+                                                ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                                    ctx.deleteMessage(messages.message_id)
                                                 })
                                             })
-                                        })();
+
+
+                                            // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
+                                        }).catch(err => {
+                                            console.error(err);
+                                        });
 
                                     }
 
