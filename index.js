@@ -484,7 +484,7 @@ By ${named}
                                             translate(send, { to: "ar" }).then(text => {
                                                 bar = 'https://barcodeapi.org/api/' + newString;
                                                 ctx.replyWithPhoto({ url: bar }).then(() => {
-                                                    ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                                    ctx.sendMessage(text, { reply_markup: replyMarkup }).then(() => {
                                                         ctx.deleteMessage(messages.message_id)
                                                     })
                                                 })
@@ -508,7 +508,7 @@ By ${named}
                                             translate(send, { to: "fr" }).then(text => {
                                                 bar = 'https://barcodeapi.org/api/' + newString;
                                                 ctx.replyWithPhoto({ url: bar }).then(() => {
-                                                    ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                                    ctx.sendMessage(text, { reply_markup: replyMarkup }).then(() => {
                                                         ctx.deleteMessage(messages.message_id)
                                                     })
                                                 })
@@ -524,7 +524,7 @@ By ${named}
                                             translate(send, { to: "ar" }).then(text => {
                                                 bar = 'https://barcodeapi.org/api/' + newString;
                                                 ctx.replyWithPhoto({ url: bar }).then(() => {
-                                                    ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                                    ctx.sendMessage(text, { reply_markup: replyMarkup }).then(() => {
                                                         ctx.deleteMessage(messages.message_id)
                                                     })
                                                 })
