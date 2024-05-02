@@ -1,7 +1,6 @@
 const { Telegraf, Markup } = require('telegraf');
 const axios = require('axios');
 const https = require('https');
-const { translate } = require('bing-translate-api');
 const express = require('express');
 const cheerio = require('cheerio');
 const app = express();
@@ -479,18 +478,20 @@ By ${named}
                                         ],
                                     };
                                     if (user[0].translateok == "ar") {
-                                        translate(send, null, 'ar').then(res => {
-                                            bar = 'https://barcodeapi.org/api/' + newString;
-                                            ctx.replyWithPhoto({ url: bar }).then(() => {
-                                                ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
-                                                    ctx.deleteMessage(messages.message_id)
+                                        const translate = import("translate").then(module => {
+                                            const translate = module.default;
+
+                                            translate(send, { to: "ar" }).then(text => {
+                                                bar = 'https://barcodeapi.org/api/' + newString;
+                                                ctx.replyWithPhoto({ url: bar }).then(() => {
+                                                    ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                                        ctx.deleteMessage(messages.message_id)
+                                                    })
                                                 })
-                                            })
 
-
-                                            // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
+                                            });
                                         }).catch(err => {
-                                            console.error(err);
+                                            console.error('Error:', err);
                                         });
 
                                     } else if (user[0].translateok == "en") {
@@ -501,33 +502,36 @@ By ${named}
                                             })
                                         })
                                     } else if (user[0].translateok == "fr") {
-                                        translate(send, null, 'fr').then(res => {
-                                            bar = 'https://barcodeapi.org/api/' + newString;
-                                            ctx.replyWithPhoto({ url: bar }).then(() => {
-                                                ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
-                                                    ctx.deleteMessage(messages.message_id)
+                                        const translate = import("translate").then(module => {
+                                            const translate = module.default;
+
+                                            translate(send, { to: "fr" }).then(text => {
+                                                bar = 'https://barcodeapi.org/api/' + newString;
+                                                ctx.replyWithPhoto({ url: bar }).then(() => {
+                                                    ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                                        ctx.deleteMessage(messages.message_id)
+                                                    })
                                                 })
-                                            })
 
-
-                                            // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
+                                            });
                                         }).catch(err => {
-                                            console.error(err);
+                                            console.error('Error:', err);
                                         });
-
                                     } else {
-                                        translate(send, null, 'ar').then(res => {
-                                            bar = 'https://barcodeapi.org/api/' + newString;
-                                            ctx.replyWithPhoto({ url: bar }).then(() => {
-                                                ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
-                                                    ctx.deleteMessage(messages.message_id)
+                                        const translate = import("translate").then(module => {
+                                            const translate = module.default;
+
+                                            translate(send, { to: "ar" }).then(text => {
+                                                bar = 'https://barcodeapi.org/api/' + newString;
+                                                ctx.replyWithPhoto({ url: bar }).then(() => {
+                                                    ctx.sendMessage(res.translation, { reply_markup: replyMarkup }).then(() => {
+                                                        ctx.deleteMessage(messages.message_id)
+                                                    })
                                                 })
-                                            })
 
-
-                                            // ctx.sendMessage(res.translation, { reply_markup: replyMarkup })
+                                            });
                                         }).catch(err => {
-                                            console.error(err);
+                                            console.error('Error:', err);
                                         });
 
                                     }
