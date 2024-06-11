@@ -7,6 +7,7 @@ const app = express();
 const botToken = process.env.token;
 const Channel = process.env.channel;
 const IdChannel = process.env.idchannel;
+const bots = process.env.bots;
 const bot = new Telegraf(botToken);
 
 const { createClient } = require('@supabase/supabase-js');
@@ -472,7 +473,7 @@ By ${named}
                                         inline_keyboard: [
 
                                             [{ text: 'انضم الى قناتنا', url: Channel }],
-                                            [{ text: 'جرب بوت تخفيض النقاط', url: 'https://t.me/Procoinsbot_bot' },],
+                                            [{ text: 'جرب بوت تخفيض النقاط', url: bots },],
 
 
                                         ],
