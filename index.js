@@ -268,6 +268,16 @@ bot.hears('تسمية الطرد', async (ctx) => {
 
 
 
+async function isUserSubscribed(user_id) {
+    try {
+        const user_info = await bot.telegram.getChatMember(IdChannel, user_id);
+        console.log(user_info);
+        return ['member', 'administrator', 'creator'].includes(user_info.status);
+    } catch (e) {
+        console.error(`حدث خطأ: ${e.message}`);
+        return false;
+    }
+}
 
 
 app.use(express.json());
@@ -377,16 +387,6 @@ async function track(message) {
     }
 }
 
-async function isUserSubscribed(user_id) {
-    try {
-        const user_info = await bot.telegram.getChatMember(IdChannel, user_id);
-        console.log(user_info);
-        return ['member', 'administrator', 'creator'].includes(user_info.status);
-    } catch (e) {
-        console.error(`حدث خطأ: ${e.message}`);
-        return false;
-    }
-}
 
 async function Ems(tracks) {
     try {
