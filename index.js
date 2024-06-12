@@ -290,8 +290,18 @@ function keepAppRunning() {
     }, 5 * 60 * 1000);
 }
 
-
+async function isUserSubscribed(user_id) {
+    try {
+        const user_info = await bot.telegram.getChatMember(IdChannel, user_id);
+        console.log(user_info);
+        return ['member', 'administrator', 'creator'].includes(user_info.status);
+    } catch (e) {
+        console.error(`حدث خطأ: ${e.message}`);
+        return false;
+    }
+}
 bot.command(['start', 'help'], async (ctx) => {
+      if (await isUserSubscribed(userIdToCheck)) {
     const welcomeMessage = `
 مرحبًا بك في بوت تتبع الطرود! 📦✨
 
@@ -313,6 +323,15 @@ bot.command(['start', 'help'], async (ctx) => {
 
 
     }
+
+                } else {
+            const replyMarkup2 = {
+                inline_keyboard: [
+                    [{ text: 'اشتراك', url: Channel }],
+                ],
+            };
+            ctx.reply(' اأنت غير مشترك في القناة.', { reply_markup: replyMarkup2 });
+        }
 });
 
 
@@ -367,16 +386,7 @@ async function track(message) {
     }
 }
 
-async function isUserSubscribed(user_id) {
-    try {
-        const user_info = await bot.telegram.getChatMember(IdChannel, user_id);
-        console.log(user_info);
-        return ['member', 'administrator', 'creator'].includes(user_info.status);
-    } catch (e) {
-        console.error(`حدث خطأ: ${e.message}`);
-        return false;
-    }
-}
+
 
 async function Ems(tracks) {
     try {
