@@ -290,19 +290,10 @@ function keepAppRunning() {
     }, 5 * 60 * 1000);
 }
 
-async function isUserSubscribed(user_id) {
-    try {
-        const user_info = await bot.telegram.getChatMember(IdChannel, user_id);
-        console.log(user_info);
-        return ['member', 'administrator', 'creator'].includes(user_info.status);
-    } catch (e) {
-        console.error(`حدث خطأ: ${e.message}`);
-        return false;
-    }
-}
+
 bot.command(['start', 'help'], async (ctx) => {
-      if (await isUserSubscribed(userIdToCheck)) {
-    const welcomeMessage = `
+    if (await isUserSubscribed(userIdToCheck)) {
+        const welcomeMessage = `
 مرحبًا بك في بوت تتبع الطرود! 📦✨
 
 نحن هنا لمساعدتك في تتبع طرودك بسهولة ويسر. ما عليك سوى إرسال رقم الطرد الخاص بك، وسنقوم بتزويدك بآخر المعلومات حول حالة الشحنة في الحال.
@@ -311,27 +302,27 @@ bot.command(['start', 'help'], async (ctx) => {
 
 بانتظار خدمتك، 🤖📦
     `;
-    const user = await userDb(ctx.message.from.id);
+        const user = await userDb(ctx.message.from.id);
 
-    if (user[0]) { // kayen
-        await ctx.reply(welcomeMessage, markup_admin);
-    } else {
-        await createUser({ id: ctx.message.from.id, mode: "track", track: [] })
-            .then(async (data, error) => {
-                await ctx.reply(welcomeMessage, markup_admin);
-            });
+        if (user[0]) { // kayen
+            await ctx.reply(welcomeMessage, markup_admin);
+        } else {
+            await createUser({ id: ctx.message.from.id, mode: "track", track: [] })
+                .then(async (data, error) => {
+                    await ctx.reply(welcomeMessage, markup_admin);
+                });
 
 
-    }
-
-                } else {
-            const replyMarkup2 = {
-                inline_keyboard: [
-                    [{ text: 'اشتراك', url: Channel }],
-                ],
-            };
-            ctx.reply(' اأنت غير مشترك في القناة.', { reply_markup: replyMarkup2 });
         }
+
+    } else {
+        const replyMarkup2 = {
+            inline_keyboard: [
+                [{ text: 'اشتراك', url: Channel }],
+            ],
+        };
+        ctx.reply(' اأنت غير مشترك في القناة.', { reply_markup: replyMarkup2 });
+    }
 });
 
 
@@ -386,7 +377,16 @@ async function track(message) {
     }
 }
 
-
+async function isUserSubscribed(user_id) {
+    try {
+        const user_info = await bot.telegram.getChatMember(IdChannel, user_id);
+        console.log(user_info);
+        return ['member', 'administrator', 'creator'].includes(user_info.status);
+    } catch (e) {
+        console.error(`حدث خطأ: ${e.message}`);
+        return false;
+    }
+}
 
 async function Ems(tracks) {
     try {
