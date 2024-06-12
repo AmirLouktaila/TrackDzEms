@@ -302,6 +302,7 @@ function keepAppRunning() {
 
 
 bot.command(['start', 'help'], async (ctx) => {
+    const userIdToCheck = ctx.message.from.id;
     if (await isUserSubscribed(userIdToCheck)) {
         const welcomeMessage = `
 مرحبًا بك في بوت تتبع الطرود! 📦✨
