@@ -268,16 +268,6 @@ bot.hears('تسمية الطرد', async (ctx) => {
 
 
 
-async function isUserSubscribed(user_id) {
-    try {
-        const user_info = await bot.telegram.getChatMember(IdChannel, user_id);
-        console.log(user_info);
-        return ['member', 'administrator', 'creator'].includes(user_info.status);
-    } catch (e) {
-        console.error(`حدث خطأ: ${e.message}`);
-        return false;
-    }
-}
 
 
 app.use(express.json());
@@ -300,11 +290,9 @@ function keepAppRunning() {
     }, 5 * 60 * 1000);
 }
 
-bot.command(['start', 'help'], async (ctx) => {
-    const userIdToCheck = ctx.message.from.id;
 
-    if (await isUserSubscribed(userIdToCheck)) {
-        const welcomeMessage = `
+bot.command(['start', 'help'], async (ctx) => {
+    const welcomeMessage = `
 مرحبًا بك في بوت تتبع الطرود! 📦✨
 
 نحن هنا لمساعدتك في تتبع طرودك بسهولة ويسر. ما عليك سوى إرسال رقم الطرد الخاص بك، وسنقوم بتزويدك بآخر المعلومات حول حالة الشحنة في الحال.
@@ -312,28 +300,18 @@ bot.command(['start', 'help'], async (ctx) => {
 معنا، لن تفقد طردًا مرة أخرى! لا تتردد في طرح أي استفسارات أو مساعدة أخرى.
 
 بانتظار خدمتك، 🤖📦
-        `;
+    `;
+    const user = await userDb(ctx.message.from.id);
 
-        try {
-            const user = await userDb(ctx.message.from.id);
-
-            if (user && user.length > 0) { // المستخدم موجود
-                await ctx.reply(welcomeMessage, markup_admin);
-            } else {
-                await createUser({ id: ctx.message.from.id, mode: "track", track: [] });
-                await ctx.reply(welcomeMessage, markup_admin);
-            }
-        } catch (error) {
-            console.error('Error accessing or creating user:', error);
-            ctx.reply('حدث خطأ أثناء معالجة طلبك. يرجى المحاولة مرة أخرى لاحقًا.');
-        }
+    if (user[0]) { // kayen
+        await ctx.reply(welcomeMessage, markup_admin);
     } else {
-        const replyMarkup2 = {
-            inline_keyboard: [
-                [{ text: 'اشتراك', url: Channel }],
-            ],
-        };
-        ctx.reply('أنت غير مشترك في القناة.', { reply_markup: replyMarkup2 });
+        await createUser({ id: ctx.message.from.id, mode: "track", track: [] })
+            .then(async (data, error) => {
+                await ctx.reply(welcomeMessage, markup_admin);
+            });
+
+
     }
 });
 
@@ -389,6 +367,16 @@ async function track(message) {
     }
 }
 
+async function isUserSubscribed(user_id) {
+    try {
+        const user_info = await bot.telegram.getChatMember(IdChannel, user_id);
+        console.log(user_info);
+        return ['member', 'administrator', 'creator'].includes(user_info.status);
+    } catch (e) {
+        console.error(`حدث خطأ: ${e.message}`);
+        return false;
+    }
+}
 
 async function Ems(tracks) {
     try {
@@ -417,102 +405,62 @@ async function Ems(tracks) {
         return "Error occurred"; // Return an error message
     }
 }
-function PostTracking(id) {
-    const url = `https://apt.notibyte-dz.com/track?id=${id}`;
-
-    // Disable SSL verification (for testing purposes only)
-    const agent = new https.Agent({
-        rejectUnauthorized: false
-    });
-
-    return axios.get(url, { httpsAgent: agent })
-        .then(response => {
-            if (response.status === 200) {
-                return response.data; // Return the entire list of tracking items
-            } else {
-                throw new Error(`Failed to retrieve data. Status code: ${response.status}`);
-            }
-        })
-        .catch(error => {
-            throw new Error(`Error: ${error.message}`);
-        });
-}
-
 
 bot.on('text', async (ctx) => {
     const chatId = ctx.chat.id;
     const text = ctx.message.text;
     const userIdToCheck = ctx.message.from.id;
     const user = await userDb(ctx.message.from.id);
-    console.log(user && user.length > 0 == "track")
-
     if (user[0].mode == "track") {
-        if (text.startsWith("RR") || text.startsWith("LP") || text.startsWith("UA") || text.startsWith("RB") || text.startsWith("EY") || text.startsWith("UT") || text.startsWith("EX")) {
+        if (await isUserSubscribed(userIdToCheck)) {
+            console.log('t')
+            try {
+                if (text === "/start") {
+                    console.log("ok");
+                } else {
+                    try {
 
-            if (await isUserSubscribed(userIdToCheck)) {
-                console.log('t')
-                try {
-                    if (text === "/start") {
-                        console.log("ok");
-                    } else {
-                        try {
+                        ctx.reply('انتظر قليلا ...').then((messages) => {
+                            let newString = deleteWordBeforeSpace(text);
+                            (async () => {
 
-                            ctx.reply('انتظر قليلا ...').then((messages) => {
-                                let newString = deleteWordBeforeSpace(text);
+                                var named = "";
+                                try {
+                                    const trackEms = await Ems(newString[0]);
+                                    let detailsText = "";
+                                    if (trackEms == "Timeline not found") {
 
-                                (async () => {
-                                    var named = "";
-                                    let detailsText = ""; // Initialize detailsText in the outer scope
+                                        console.log(newString[0]);
+                                        const trackingResult = await track(newString[0]);
 
-                                    try {
-                                        const postTrack = await PostTracking(newString[0]);
-
-                                        if (postTrack.length > 1) {
-                                            if (Array.isArray(postTrack)) {
-                                                // Iterate over each tracking item
-                                                postTrack.forEach(item => {
-                                                    detailsText += `✈️ ${item.event}\n${item.location}\n🕐 ${item.date}\n${'-'.repeat(30)}\n`;
-                                                });
-                                                named = "Post Track";
-                                            } else {
-                                                console.log(postTrack);
+                                        if (trackingResult && trackingResult.length > 0) {
+                                            for (const detail of trackingResult) {
+                                                const standerdDesc = detail.standerd_desc;
+                                                const place = detail.place;
+                                                const date = detail.date;
+                                                named = "OneTrack"
+                                                if (place === undefined) {
+                                                    detailsText += `✈️ ${standerdDesc}\n🕐${date}\n${'-'.repeat(30)}\n`;
+                                                } else {
+                                                    detailsText += `✈️ ${standerdDesc}\n${place}\n🕐${date}\n${'-'.repeat(30)}\n`;
+                                                }
                                             }
                                         } else {
-                                            const trackEms = await Ems(newString[0]);
-
-                                            if (trackEms === "Timeline not found") {
-                                                console.log(newString[0]);
-
-                                                const trackingResult = await track(newString[0]);
-                                                if (trackingResult && trackingResult.length > 0) {
-                                                    for (const detail of trackingResult) {
-                                                        const standerdDesc = detail.standerd_desc;
-                                                        const place = detail.place;
-                                                        const date = detail.date;
-                                                        named = "OneTrack";
-
-                                                        if (place === undefined) {
-                                                            detailsText += `✈️ ${standerdDesc}\n🕐 ${date}\n${'-'.repeat(30)}\n`;
-                                                        } else {
-                                                            detailsText += `✈️ ${standerdDesc}\n${place}\n🕐 ${date}\n${'-'.repeat(30)}\n`;
-                                                        }
-                                                    }
-                                                } else {
-                                                    const s = await track_cainio(newString[0]);
-                                                    for (const detail of s.detail_list) {
-                                                        const standerd_desc = detail.standerdDesc;
-                                                        const timeStr = detail.timeStr;
-                                                        named = "Cainiao";
-                                                        detailsText += `✈️ ${standerd_desc}\n🕐 ${timeStr}\n${'-'.repeat(30)}\n`;
-                                                    }
-                                                }
-                                            } else {
-                                                detailsText = trackEms;
-                                                named = 'EmsDz';
+                                            const s = await track_cainio(newString[0]);
+                                            for (const detail of s.detail_list) {
+                                                const standerd_desc = detail.standerdDesc;
+                                                const timeStr = detail.timeStr;
+                                                named = "Cainiao"
+                                                detailsText += `✈️${standerd_desc}\n 🕐${timeStr}\n${'-'.repeat(30)}\n`;
                                             }
                                         }
 
-                                        const send = `
+                                    } else {
+                                        detailsText = trackEms;
+                                        named = 'EmsDz'
+                                    }
+
+                                    const send = `
 Information about the Expulsion :
 
 ${detailsText} 
@@ -521,148 +469,97 @@ By ${named}
 `;
 
 
+                                    const replyMarkup = await {
+                                        inline_keyboard: [
 
-                                        const replyMarkup = await {
-                                            inline_keyboard: [
-
-                                                [{ text: 'انضم الى قناتنا', url: Channel }],
-                                                [{ text: 'جرب بوت تخفيض النقاط', url: bots },],
-
-
-                                            ],
-                                        };
-
-                                        if (user[0].translateok == "ar") {
-                                            const translate = import("translate").then(module => {
-                                                const translate = module.default;
-
-                                                translate(send, { to: "ar" }).then(text => {
-                                                    bar = 'https://barcodeapi.org/api/' + newString;
-                                                    try {
-                                                        ctx.replyWithPhoto({ url: bar }).then(() => {
-
-                                                            ctx.sendMessage(text, { reply_markup: replyMarkup }).then(() => {
-                                                                ctx.deleteMessage(messages.message_id)
-                                                            })
-                                                        })
-                                                    } catch (e) {
-                                                        try {
-                                                            ctx.sendMessage("خطأ سيتم معالجته قريبا")
-                                                        } catch (e) {
-                                                            console.log("errors")
-                                                        }
+                                            [{ text: 'انضم الى قناتنا', url: Channel }],
+                                            [{ text: 'جرب بوت تخفيض النقاط', url: bots },],
 
 
-                                                    }
+                                        ],
+                                    };
+                                    if (user[0].translateok == "ar") {
+                                        const translate = import("translate").then(module => {
+                                            const translate = module.default;
 
-
-                                                });
-                                            }).catch(err => {
-                                                console.error('Error:', err);
-                                            });
-
-                                        } else if (user[0].translateok == "en") {
-                                            bar = 'https://barcodeapi.org/api/' + newString;
-                                            try {
+                                            translate(send, { to: "ar" }).then(text => {
+                                                bar = 'https://barcodeapi.org/api/' + newString;
                                                 ctx.replyWithPhoto({ url: bar }).then(() => {
-                                                    ctx.sendMessage(send, { reply_markup: replyMarkup }).then(() => {
+                                                    ctx.sendMessage(text, { reply_markup: replyMarkup }).then(() => {
                                                         ctx.deleteMessage(messages.message_id)
                                                     })
                                                 })
-                                            } catch (e) {
-                                                try {
-                                                    ctx.sendMessage("خطأ سيتم معالجته قريبا")
-                                                } catch (e) {
-                                                    console.log("errors")
-                                                }
 
-
-                                            }
-
-                                        } else if (user[0].translateok == "fr") {
-                                            const translate = import("translate").then(module => {
-                                                const translate = module.default;
-
-                                                translate(send, { to: "fr" }).then(text => {
-                                                    bar = 'https://barcodeapi.org/api/' + newString;
-                                                    try {
-                                                        ctx.replyWithPhoto({ url: bar }).then(() => {
-                                                            ctx.sendMessage(text, { reply_markup: replyMarkup }).then(() => {
-                                                                ctx.deleteMessage(messages.message_id)
-                                                            })
-                                                        })
-                                                    } catch (e) {
-                                                        try {
-                                                            ctx.sendMessage("خطأ سيتم معالجته قريبا")
-                                                        } catch (e) {
-                                                            console.log("errors")
-                                                        }
-
-
-                                                    }
-
-
-                                                });
-                                            }).catch(err => {
-                                                console.error('Error:', err);
                                             });
-                                        } else {
-                                            const translate = import("translate").then(module => {
-                                                const translate = module.default;
+                                        }).catch(err => {
+                                            console.error('Error:', err);
+                                        });
 
-                                                translate(send, { to: "ar" }).then(text => {
-                                                    bar = 'https://barcodeapi.org/api/' + newString;
-                                                    try {
-                                                        ctx.replyWithPhoto({ url: bar }).then(() => {
-                                                            ctx.sendMessage(text, { reply_markup: replyMarkup }).then(() => {
-                                                                ctx.deleteMessage(messages.message_id)
-                                                            })
-                                                        })
-                                                    } catch (e) {
-                                                        try {
-                                                            ctx.sendMessage("خطأ سيتم معالجته قريبا")
-                                                        } catch (e) {
-                                                            console.log("errors")
-                                                        }
+                                    } else if (user[0].translateok == "en") {
+                                        bar = 'https://barcodeapi.org/api/' + newString;
+                                        ctx.replyWithPhoto({ url: bar }).then(() => {
+                                            ctx.sendMessage(send, { reply_markup: replyMarkup }).then(() => {
+                                                ctx.deleteMessage(messages.message_id)
+                                            })
+                                        })
+                                    } else if (user[0].translateok == "fr") {
+                                        const translate = import("translate").then(module => {
+                                            const translate = module.default;
 
+                                            translate(send, { to: "fr" }).then(text => {
+                                                bar = 'https://barcodeapi.org/api/' + newString;
+                                                ctx.replyWithPhoto({ url: bar }).then(() => {
+                                                    ctx.sendMessage(text, { reply_markup: replyMarkup }).then(() => {
+                                                        ctx.deleteMessage(messages.message_id)
+                                                    })
+                                                })
 
-                                                    }
-
-                                                });
-                                            }).catch(err => {
-                                                console.error('Error:', err);
                                             });
+                                        }).catch(err => {
+                                            console.error('Error:', err);
+                                        });
+                                    } else {
+                                        const translate = import("translate").then(module => {
+                                            const translate = module.default;
 
-                                        }
+                                            translate(send, { to: "ar" }).then(text => {
+                                                bar = 'https://barcodeapi.org/api/' + newString;
+                                                ctx.replyWithPhoto({ url: bar }).then(() => {
+                                                    ctx.sendMessage(text, { reply_markup: replyMarkup }).then(() => {
+                                                        ctx.deleteMessage(messages.message_id)
+                                                    })
+                                                })
 
-                                    } catch (error) {
-                                        console.error('Error:', error);
-                                        ctx.sendMessage("رقم التتبع خاطئ")
+                                            });
+                                        }).catch(err => {
+                                            console.error('Error:', err);
+                                        });
+
                                     }
-                                })();
 
-                            });
-                        }
-                        catch (e) {
+                                } catch (error) {
+                                    console.error('Error:', error);
+                                    ctx.sendMessage("رقم التتبع خاطئ")
+                                }
+                            })();
 
-                        }
+                        });
                     }
-                } catch (e) {
-                    ctx.reply('حدث خطأ غير متوقع');
+                    catch (e) {
+
+                    }
                 }
-            } else {
-                const replyMarkup2 = {
-                    inline_keyboard: [
-                        [{ text: 'اشتراك', url: Channel }],
-                    ],
-                };
-                ctx.reply(' اأنت غير مشترك في القناة.', { reply_markup: replyMarkup2 });
+            } catch (e) {
+                ctx.reply('حدث خطأ غير متوقع');
             }
         } else {
-            ctx.sendMessage("رمز تتبغ غير صحيح")
+            const replyMarkup2 = {
+                inline_keyboard: [
+                    [{ text: 'اشتراك', url: Channel }],
+                ],
+            };
+            ctx.reply(' اأنت غير مشترك في القناة.', { reply_markup: replyMarkup2 });
         }
-
-        //// 
     } else if (user[0].mode == "add") {
         user[0].track.push(" " + ctx.message.text)
         await updateUser(ctx.message.from.id, { track: user[0].track })
@@ -698,7 +595,6 @@ By ${named}
         }
 
     }
-
 
 
 });
