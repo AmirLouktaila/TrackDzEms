@@ -463,7 +463,7 @@ bot.on('text', async (ctx) => {
 
                                     var named = "";
                                     try {
-                                        const postTrack = PostTracking("RB325595873SG")
+                                        const postTrack = PostTracking(newString[0])
                                         if (postTrack.length > 1) {
 
                                             if (Array.isArray(postTrack)) {
