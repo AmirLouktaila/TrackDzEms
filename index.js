@@ -462,28 +462,23 @@ bot.on('text', async (ctx) => {
 
                                 (async () => {
                                     var named = "";
-                                    let detailsText = ""; 
+                                    let detailsText = ""; // Initialize detailsText in the outer scope
+
                                     try {
                                         const postTrack = await PostTracking(newString[0]);
 
                                         if (postTrack.length > 1) {
-                                            
-
                                             if (Array.isArray(postTrack)) {
-                                 
+                                                // Iterate over each tracking item
                                                 postTrack.forEach(item => {
-                                                    detailsText += `✈️ ${item.event}\n${item.location}\n🕐${item.date}\n${'-'.repeat(30)}\n`;
+                                                    detailsText += `✈️ ${item.event}\n${item.location}\n🕐 ${item.date}\n${'-'.repeat(30)}\n`;
                                                 });
-                                                named = "Post Track"; 
+                                                named = "Post Track";
                                             } else {
-                                                console.log(postTrack); 
+                                                console.log(postTrack);
                                             }
-
-                                            console.log(detailsText);
-
                                         } else {
                                             const trackEms = await Ems(newString[0]);
-                                            let detailsText = "";
 
                                             if (trackEms === "Timeline not found") {
                                                 console.log(newString[0]);
@@ -497,9 +492,9 @@ bot.on('text', async (ctx) => {
                                                         named = "OneTrack";
 
                                                         if (place === undefined) {
-                                                            detailsText += `✈️ ${standerdDesc}\n🕐${date}\n${'-'.repeat(30)}\n`;
+                                                            detailsText += `✈️ ${standerdDesc}\n🕐 ${date}\n${'-'.repeat(30)}\n`;
                                                         } else {
-                                                            detailsText += `✈️ ${standerdDesc}\n${place}\n🕐${date}\n${'-'.repeat(30)}\n`;
+                                                            detailsText += `✈️ ${standerdDesc}\n${place}\n🕐 ${date}\n${'-'.repeat(30)}\n`;
                                                         }
                                                     }
                                                 } else {
@@ -508,10 +503,9 @@ bot.on('text', async (ctx) => {
                                                         const standerd_desc = detail.standerdDesc;
                                                         const timeStr = detail.timeStr;
                                                         named = "Cainiao";
-                                                        detailsText += `✈️${standerd_desc}\n 🕐${timeStr}\n${'-'.repeat(30)}\n`;
+                                                        detailsText += `✈️ ${standerd_desc}\n🕐 ${timeStr}\n${'-'.repeat(30)}\n`;
                                                     }
                                                 }
-
                                             } else {
                                                 detailsText = trackEms;
                                                 named = 'EmsDz';
@@ -525,6 +519,7 @@ ${detailsText}
 
 By ${named}
 `;
+
 
 
                                         const replyMarkup = await {
