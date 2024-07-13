@@ -459,43 +459,42 @@ bot.on('text', async (ctx) => {
 
                             ctx.reply('انتظر قليلا ...').then((messages) => {
                                 let newString = deleteWordBeforeSpace(text);
-                                (async () => {
 
+                                (async () => {
                                     var named = "";
                                     try {
-                                        const postTrack = PostTracking(newString[0]);
+                                        const postTrack = await PostTracking(newString[0]);
 
                                         if (postTrack.length > 1) {
-                                            let detailsText = ""; // Move the declaration of detailsText to the correct scope
+                                            let detailsText = ""; 
 
                                             if (Array.isArray(postTrack)) {
-                                                // Iterate over each tracking item
+                                 
                                                 postTrack.forEach(item => {
                                                     detailsText += `✈️ ${item.event}\n${item.location}\n🕐${item.date}\n${'-'.repeat(30)}\n`;
                                                 });
-                                                 named = "Post Track"; // Ensure 'named' is properly declared if needed
+                                                named = "Post Track"; 
                                             } else {
-                                                console.log(tracking_data);
+                                                console.log(postTrack); 
                                             }
 
-                                            // You can use detailsText here if needed
-                                            console.log(detailsText); // Example usage of detailsText
-                                        
+                                            console.log(detailsText);
 
                                         } else {
                                             const trackEms = await Ems(newString[0]);
                                             let detailsText = "";
-                                            if (trackEms == "Timeline not found") {
 
+                                            if (trackEms === "Timeline not found") {
                                                 console.log(newString[0]);
-                                                const trackingResult = await track(newString[0]);
 
+                                                const trackingResult = await track(newString[0]);
                                                 if (trackingResult && trackingResult.length > 0) {
                                                     for (const detail of trackingResult) {
                                                         const standerdDesc = detail.standerd_desc;
                                                         const place = detail.place;
                                                         const date = detail.date;
-                                                        named = "OneTrack"
+                                                        named = "OneTrack";
+
                                                         if (place === undefined) {
                                                             detailsText += `✈️ ${standerdDesc}\n🕐${date}\n${'-'.repeat(30)}\n`;
                                                         } else {
@@ -507,16 +506,17 @@ bot.on('text', async (ctx) => {
                                                     for (const detail of s.detail_list) {
                                                         const standerd_desc = detail.standerdDesc;
                                                         const timeStr = detail.timeStr;
-                                                        named = "Cainiao"
+                                                        named = "Cainiao";
                                                         detailsText += `✈️${standerd_desc}\n 🕐${timeStr}\n${'-'.repeat(30)}\n`;
                                                     }
                                                 }
 
                                             } else {
                                                 detailsText = trackEms;
-                                                named = 'EmsDz'
+                                                named = 'EmsDz';
                                             }
                                         }
+
                                         const send = `
 Information about the Expulsion :
 
