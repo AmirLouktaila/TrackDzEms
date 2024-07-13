@@ -463,28 +463,24 @@ bot.on('text', async (ctx) => {
 
                                     var named = "";
                                     try {
-                                        const postTrack = PostTracking(newString[0])
+                                        const postTrack = PostTracking(newString[0]);
+
                                         if (postTrack.length > 1) {
+                                            let detailsText = ""; // Move the declaration of detailsText to the correct scope
 
                                             if (Array.isArray(postTrack)) {
-                                                let detailsText = "";
                                                 // Iterate over each tracking item
                                                 postTrack.forEach(item => {
-                                                    //  console.log(`Date: ${item.date}`);
-                                                    //  console.log(`Time: ${item.time}`);
-                                                    //  console.log(`Event: ${item.event}`);
-                                                    //  console.log(`Location: ${item.location}`);
-                                                    //  console.log(`Note: ${item.note}`);
-                                                    //  console.log('-'.repeat(20));
-
-
                                                     detailsText += `✈️ ${item.event}\n${item.location}\n🕐${item.date}\n${'-'.repeat(30)}\n`;
-
                                                 });
-                                                named = "Post Track"
+                                                 named = "Post Track"; // Ensure 'named' is properly declared if needed
                                             } else {
                                                 console.log(tracking_data);
                                             }
+
+                                            // You can use detailsText here if needed
+                                            console.log(detailsText); // Example usage of detailsText
+                                        
 
                                         } else {
                                             const trackEms = await Ems(newString[0]);
