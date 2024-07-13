@@ -462,11 +462,12 @@ bot.on('text', async (ctx) => {
 
                                 (async () => {
                                     var named = "";
+                                    let detailsText = ""; 
                                     try {
                                         const postTrack = await PostTracking(newString[0]);
 
                                         if (postTrack.length > 1) {
-                                            let detailsText = ""; 
+                                            
 
                                             if (Array.isArray(postTrack)) {
                                  
