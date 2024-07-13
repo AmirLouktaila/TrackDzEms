@@ -15,10 +15,6 @@ const supabase = createClient(process.env.SB_URL, process.env.SB_KEY, { auth: { 
 // /** db **/
 
 function deleteWordBeforeSpace(str) {
-
-
-
-
     // let words = str.split(" ");
 
     // if (words.length >= 2) {
