@@ -467,6 +467,7 @@ bot.on('text', async (ctx) => {
                                         if (postTrack.length > 1) {
 
                                             if (Array.isArray(postTrack)) {
+                                                let detailsText = "";
                                                 // Iterate over each tracking item
                                                 postTrack.forEach(item => {
                                                     //  console.log(`Date: ${item.date}`);
